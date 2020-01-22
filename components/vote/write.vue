@@ -1,0 +1,794 @@
+<template>
+	<div class="min" >
+    <div style="padding-bottom:1.2rem;">
+      <div class="header-search">
+        <div class="search-content">
+          <div class="fanhui" @click="back($route.params.id)"><img src="/static/img/fanhui.png"></div>
+          <div class="searchbox">
+           参选征集
+          </div>
+
+        </div>
+      </div>
+      </div>
+		<!-- <x-header :left-options="{backText: ''}">投票选手征集</x-header> -->
+   <!-- <vue-back1 :name='question' :type='1' :ids='$route.params.id'></vue-back1> -->
+		<div class="hots">
+			<div class="hots-txt">
+				专业服务弱电行业&#x3000;&#x3000; 简单高效&#x3000;
+				<div class="hots-right">
+					<span>hot</span>
+				</div>
+			</div>
+		</div>
+		<div class="fire">
+			<span>火热征集中 ... ...</span>
+		</div>
+
+		<div class="subject">
+			<div class="sub">
+				<div class="sub-title">&#x3000;{{SolicitationInfo.title}}</div>
+				<div class="sub-tu"><img :src="$store.state.website.website_domain_name + '/uploads/' + SolicitationInfo.img "></div>
+				<div class="sub-address">
+					<span>征集地址</span>&#x3000;&#x3000;&#x3000;
+					<span>{{SolicitationInfo.address}}</span>
+				</div>
+				<div class="sub-address sub-start">
+					<span>开始时间</span>&#x3000;&#x3000;
+					<span>{{SolicitationInfo.start_time | returntime1}}</span>
+				</div>
+        <div class="sub-address sub-start">
+        	<span>结束时间</span>&#x3000;&#x3000;
+        	<span>{{SolicitationInfo.end_time | returntime1}}</span>
+        </div>
+			</div>
+		</div>
+
+		<div v-for="(item,i) in addlist" :key="i">
+			<div style="margin:15px 0;height: 4px;"></div>
+
+			<div class="party">
+				<group gutter="0">
+					<x-input v-model="addlist[i].title_s" placeholder="输入参选名称">
+						<div slot="label" class="ban_title">
+							<strong>*</strong>
+							<span>参选名称：</span>
+						</div>
+					</x-input>
+
+					<div class="imgBlock">
+						<span class="imgTitle"> <strong>* </strong>添加图片：</span>
+
+						<div class="sctp">
+
+							<!--<div v-if="addlist[i].img_s" controls class="vjs-tech sp" style="width= 100%; height=100%; object-fit: fill" id="headvideo" :src="$store.state.website.website_domain_name + '/uploads/' + addlist[i].img_s">
+								<img src="../../../static/img/d.png" alt="" class="del" @click="del(i)" />
+								<img :src="$store.state.website.website_domain_name + '/uploads/' + addlist[i].img_s" alt />
+							</div>-->
+							<div v-if="ImgList[i]" controls class="vjs-tech sp" style="width= 100%; height=100%; object-fit: fill" id="headvideo" :src="$store.state.website.website_domain_name + '/uploads/' + ImgList[i]">
+								<img src="../../../static/img/d.png" alt="" class="del" @click="del(i)" />
+								<img :src="$store.state.website.website_domain_name + '/uploads/' + ImgList[i]" alt="" />
+							</div>
+
+							<div id="upload" v-if="!ImgList[i]">
+
+								<form enctype="multipart/form-data" method="post" id="upload" style="width:100%;height:100%">
+									<img src="../../../static/img/jh.png" alt="" class="tp" />
+									<!-- <input  type="file" name="upload" capture="camera" accept="image/*"  > -->
+									<!--<input type="file" capture="camera" accept="image/*" id="filetest" name="filetest" @change="doUpload1($event,i)" class="upload1" style="width: 100%; height: 100%;  opacity: 0;position: absolute;top: 0;left: 0;">-->
+										<input type="file"  accept="image/*" id="filetest" name="filetest" @change="doUpload1($event,i)" class="upload1" style="width: 100%; height: 100%;  opacity: 0;position: absolute;top: 0;left: 0;">
+								</form>
+							</div>
+						</div>
+
+						<!--<div class="input_img">
+							<div class="user_up_imgfile">
+								<span v-for="(item, index) in imgUrl" :key="index">
+                <img :src="$store.state.url + '/uploads/' + item" alt />
+                <span class="userupicon_cal" @click="removeFimg(index)" v-show="addect">
+                  <x-icon type="ios-close" size="30"></x-icon>
+                </span>
+								</span>
+								<vue-cropper2 @data="fileImgarr" :autoCropWidth="225" :autoCropHeight="160" v-show="imgUrl.length<1">
+									<img src="/static/img/icon1.png" alt />
+								</vue-cropper2>
+							</div>
+						</div>-->
+					</div>
+					<!--<x-input v-model="video" placeholder="">
+          <div slot="label" class="ban_title">
+            <strong>*</strong>
+            <span>添加视频：</span>
+          </div>
+        </x-input>-->
+
+					<!-- <x-textarea :max="500" :placeholder="''" v-model="addlist[i].remark_s">
+						<div slot="label" class="ban_title">
+							<strong>*</strong>
+							<span>选手详情：</span>
+						</div>
+					</x-textarea> -->
+
+          <div style="padding: 0.266667rem 0.4rem">
+            <div class="ban_title" style="margin-bottom: 10px;">
+              <strong>*</strong>
+              <span>请编辑参选详情</span>
+            </div>
+            <vue-html5-editor content="" @change="updateData($event,i)"></vue-html5-editor>
+          </div>
+          </group>
+			</div>
+			<!-- <div style="margin:15px 0;border:4px solid #C2C2C2"></div> -->
+		</div>
+
+    <!-- 最多添加三个选手 -->
+		<!-- <div class="keep">继续添加选手，每个用户最多添加3位选手</div> -->
+		<!-- <div class="plus">
+			<x-icon type="ios-plus-outline" size="30" @click="addTet"></x-icon>
+		</div> -->
+		<div class="submit" @click="submit">
+			<p>提交</p>
+		</div>
+		<vue-foot></vue-foot>
+
+		<div v-transfer-dom>
+			<x-dialog v-model="isShow" class="dialog-backnone">
+				<div class="ding_content">
+					<!--<svg @click="isShow = false" data-v-6955d917 type="ios-close" size="30" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 512 512" class="vux-x-icon vux-x-icon-ios-close cose">
+						<path data-v-6955d917 d="M403.1 108.9c-81.2-81.2-212.9-81.2-294.2 0s-81.2 212.9 0 294.2c81.2 81.2 212.9 81.2 294.2 0s81.2-213 0-294.2zM352 340.2L340.2 352l-84.4-84.2-84 83.8-11.8-11.8 84-83.8-84-83.8 11.8-11.8 84 83.8 84.4-84.2 11.8 11.8-84.4 84.2 84.4 84.2z" class="st0" />
+					</svg>-->
+					<div class="subject">
+						<div class="sub">
+							<div class="sub-title">&#x3000;{{SolicitationInfo.title}}</div>
+							<div class="sub-tu"><img :src="$store.state.website.website_domain_name + '/uploads/' + SolicitationInfo.img "></div>
+							<div class="sub-address">
+								<span>征集地址</span>&#x3000;&#x3000;&#x3000;
+								<span>{{SolicitationInfo.address}}</span>
+							</div>
+							<div class="sub-address sub-start">
+								<span>开始投票</span>&#x3000;&#x3000;
+								<span>{{SolicitationInfo.start_time | returntime1}}</span>
+							</div>
+
+							<div class="success">信息提交成功！</div>
+							<div class="success">请及时关注投票开启时间</div>
+							<div class="success">
+								<p @click="fanhui($route.params.id)">返回投票列表</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</x-dialog>
+		</div>
+
+	</div>
+</template>
+
+<script>
+	import { XHeader, XInput, Group, XTextarea, TransferDomDirective as TransferDom, XDialog } from 'vux'
+	import { VueCropper2, VueFoot, VueBack1} from '../component'
+	import eventVue from '../../eventVue.js'
+	export default {
+		directives: {
+			TransferDom
+		},
+		components: {
+			XHeader,
+			XInput,
+			Group,
+			VueCropper2,
+			XTextarea,
+			VueFoot,
+			XDialog,
+      VueBack1,
+		},
+		data() {
+			return {
+				//        name:'',
+				ImgList:[],
+				imgUrl: [],
+				SolicitationInfo: '',
+
+				addlist: [{
+					title_s: '',
+					remark_s: '',
+					img_s: '',
+				}],
+
+				title: '',
+				picture: [],
+				detail: [],
+				block: [],
+				addect: false,
+				video: '',
+				links: '',
+				isShow: false,
+				number:'',
+				img:'',
+				remark:'',
+        question:'网选选手征集',
+        urls:'',
+        mem_id:'',
+			}
+		},
+		created(){
+			this.fn()
+		  },
+		mounted() {
+       this.mem_id = this.$store.state.user.mem_id
+       console.log(this.mem_id)
+      this.urls = new URL(window.location.href)
+			this.number = this.number
+
+			var _this = this
+			_this.$http.post(_this.$store.state.url + "/Vote/voteSolicitationInfo", {
+				vote_id: _this.$route.params.id,
+			}).then(res => {
+				_this.SolicitationInfo = res
+			})
+
+			//				this.addlist.forEach(v=>{
+			//					console.log(v.name)
+			//					this.title.push(v.name)
+			//					this.picture.push(v.src)
+			//					this.detail.push(v.explain)
+			//				})
+			//				console.log(this.title)
+		},
+		methods: {
+
+      back(ids){
+         if(this.urls.searchParams.get("uidkey")){
+           this.$router.push('/vote/enrolist/' + ids +'/' +'#link')
+         }else{
+           if(this.urls.hash){
+             this,$router.push('/index')
+           }else{
+             this.$router.go(-1)
+           }
+        }
+       },
+
+
+
+
+      updateData(e,i) {
+        // console.log(i)
+      	this.addlist[i].remark_s = e;
+        console.log(this.addlist[i].remark_s)
+      },
+			fn(){
+				eventVue.$on('change',(res)=>{
+					this.number = res
+					console.log(this.number,2)
+				})
+			},
+			fileImgarr(res) {
+				this.imgUrl.push(res.imgurl);
+			},
+			submit() {
+				var _this = this
+				_this.addlist.forEach((v, index, arry) => {
+//					_this.title.push(v.title_s)
+//					_this.picture.push(v.img_s)
+//					_this.detail.push(v.remark_s)
+					_this.block = arry
+				})
+
+				console.log(_this.block)
+				_this.addlist.forEach((v, i, arr) => {
+					_this.title = v.title_s
+					_this.img = v.img_s
+					_this.remark = v.remark_s
+//					if(!v.title_s) {
+//						msg("请输入选手名称");
+//						return;
+//					}
+//					if(!v.img_s) {
+//						msg("请拍照上传照片");
+//						return;
+//					}
+//					if(!v.remark_s) {
+//						msg("请填写详情内容");
+//						return;
+//					}
+
+
+				})
+				console.log(_this.title_s)
+				if(!_this.title) {
+					msg("请输入选手名称");
+					return;
+				}
+				if(!_this.img) {
+					msg("请上传照片");
+					return;
+				}
+				if(!_this.remark) {
+					msg("请填写详情内容");
+					return;
+				}
+				_this.$http.post(_this.$store.state.url + "/Vote/addSolicitation", {
+					vote_id: _this.$route.params.id,
+					content: _this.block
+					}).then(res => {
+						console.log(res)
+						_this.isShow = true
+					})
+				_this.isShow = true
+			},
+
+			doUpload1(e, i) {
+
+				var _this = this;
+				let file = e.target.files[0]
+				let param = new FormData() // 创建form对象
+				param.append('img', file) // 通过append向form对象添加数据
+				console.log(param)
+				let config = {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				} // 添加请求头
+
+				function getPhotoOrientation(img) {
+				    var orient;
+				    EXIF.getData(img, function() {
+				      orient = EXIF.getTag(this, 'Orientation');
+				    });
+				    return orient;
+				  }
+
+				 function drawPhoto(photo, x, y, w, h) {
+
+                //获取照片的拍摄方向
+			    var orient = getPhotoOrientation(photo);
+			    alert("orient2:" + orient);
+
+			    var canvas = document.getElementById("canvas");
+			    if (canvas.getContext) {
+			      var ctx = canvas.getContext("2d");
+
+			      //draw on Canvas
+			      var img = new Image();
+			      img.onload = function() {
+
+			        var canvas_w = Number(ctx.canvas.width);
+			        var canvas_h = Number(ctx.canvas.height);
+
+			        //判断图片拍摄方向是否旋转了90度
+			        if (orient == 6) {
+			          ctx.save(); //保存状态
+			          ctx.translate(canvas_w / 2, canvas_h / 2); //设置画布上的(0,0)位置，也就是旋转的中心点
+			          ctx.rotate(90 * Math.PI / 180); //把画布旋转90度
+			          // 执行Canvas的drawImage语句
+			          ctx.drawImage(img, Number(y) - canvas_h / 2, Number(x) - canvas_w / 2, h, w); //把图片绘制在画布translate之前的中心点，
+			          ctx.restore(); //恢复状态
+			        } else {
+			          // 执行Canvas的drawImage语句
+			          ctx.drawImage(img, x, y, w, h);
+			        }
+
+			      }
+			      img.src = photo.src; // 设置图片源地址
+			    }
+			  }
+
+
+
+				_this.$store.commit('loadingOFFON', true)
+				_this.isshow = false
+				_this.$http.post(_this.$store.state.url + '/index/uploadImgs', param, config).then(function(res) {
+					if(!res) return
+					console.log(res)
+					_this.addlist[i].img_s = res.imgurl;
+//					_this.ImgList.push(res.imgurl);
+					_this.$set(_this.ImgList,i,res.imgurl)
+					console.log(_this.ImgList ,i)
+					//					console.log(_this.addlist[i].src)
+				})
+			},
+			//			删除
+			del(i) {
+
+				var _this = this;
+				console.log(_this.ImgList ,i)
+				_this.ImgList.splice(i,1)
+				delete _this.addlist[i].img_s
+			},
+
+			addTet() {
+				this.addlist.forEach((v, i, arr) => {
+					this.title = v.title_s
+					this.img = v.img_s
+					this.remark = v.remark_s
+				})
+				if(this.title&&this.img&&this.remark&&this.addlist.length<(3-this.number)){
+					this.addlist.push({
+						title_s:'',
+						remark_s:'',
+						img_s:'',
+					})
+				}else{
+
+					if(!this.title||!this.img||!this.remark){
+						msg('选手信息添加完整才可以添加新选手')
+					}
+          else if((3-this.number-1)<this.addlist.length && this.mem_id != 1126){
+						msg('最多添加三个选手')
+					}
+				}
+			},
+			fanhui(id){
+//				this.$router.push("/vote/enrolist/" + id)
+//				window.history.go(-1)
+				this.$router.go(-1)
+			},
+
+		},
+		beforeDestroy(){
+			eventVue.$off()
+		},
+	}
+</script>
+
+<style scoped>
+	.min {
+		background: #EAEAEA;
+	}
+
+	.hots {
+		width: 100%;
+		/*height: 36px;*/
+		/* background: rgba(153, 153, 153, 0.2); */
+		background: #22BAC0;
+		color: #666;
+		font-size: 16px;
+		text-align: center;
+		font-weight: normal;
+		/*padding-top: 6px*/
+		padding: 10px 0;
+		position: relative;
+		color: #fff
+	}
+
+	.hots-right {
+		display: inline-block;
+		background: url('/static/img/sanjiao.png');
+		background-size: 100% 100%;
+		position: relative;
+		height: 25px;
+		width: 40px;
+	}
+
+	.hots-right span {
+		color: #FFFFFF;
+		text-align: center;
+		display: block;
+		position: relative;
+		top: -2px;
+		font-size: 14px;
+	}
+
+	.fire {
+		padding: 15px 0;
+		text-align: center;
+		font-size: 16px;
+		width: 100%;
+		color: #FD142C;
+		background: #EAEAEA;
+		border-top: 1px solid #E3E3E3
+	}
+
+	.subject {
+		width: 96%;
+		margin: 0 auto;
+		background: #fff;
+		border-radius: 10px;
+		padding-bottom: 8px
+	}
+
+	.sub {
+		width: 95%;
+		margin: 0 auto;
+	}
+
+	.sub-title {
+		padding: 8px 0;
+		width: 100%;
+		/* text-align: center; */
+		border-bottom: 2px solid #BFBFBF;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.sub-tu {
+		width: 100%;
+		height: 200px;
+		/*background: #f00;*/
+		margin-top: 8px
+	}
+
+	.sub-tu img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.sub-address {
+		margin: 8px 0;
+		color: #BFBFBF;
+		font-size: 12px
+	}
+
+	.sub-start {
+		color: #D25555
+	}
+
+	.party {
+		/*width:90%;
+    margin:0 auto;*/
+		width: 100%;
+	}
+
+	.party .ban_title {
+		font-size: 16px;
+	}
+	/* .party .ban_title>strong {
+  	color: red;
+  } */
+
+	.imgBlock {
+		overflow: hidden;
+	}
+
+	.imgTitle {
+		margin-left: 15px;
+		float: left;
+    font-size: 16px;
+	}
+
+	.input_img,
+	.user_up_imgfile {
+		display: inline-block;
+		width: 225px;
+		float: right;
+	}
+
+	.saveZZ {
+		width: 200px;
+		margin: 50px auto;
+	}
+
+	strong {
+		color: red;
+	}
+
+	.keep {
+		padding: 10px 0;
+		font-size: 14px;
+		color: #858585;
+		width: 100%;
+		text-align: center;
+	}
+
+	.plus {
+		width: 100%;
+		text-align: center;
+	}
+
+	.plus span {
+		padding: 8px;
+		border: 1px solid #5C5C65;
+		font-size: 14px;
+		color: #5C5C65
+	}
+
+	.submit {
+		margin: 15px 0;
+		display: flex;
+		justify-content: center;
+	}
+
+	.submit p {
+		padding: 10px 30px;
+		font-size: 14px;
+		background: #22BAC0;
+		border-radius: 20px;
+		color: #fff;
+		width: 20%;
+		text-align: center;
+	}
+
+	.sctp {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		box-sizing: border-box;
+		/*width: 95%;*/
+		width: 65%;
+		margin: 30px 0;
+		float: right;
+		margin-right: 20px;
+	}
+
+	.sctp div {
+		width: 100%;
+		height: 180px;
+		/*margin: 2%;*/
+		position: relative;
+	}
+
+	.sctp div img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.del {
+		width: 18px!important;
+		height: 18px!important;
+		position: absolute;
+		right: -10px;
+		top: -10px;
+	}
+
+	.sp {
+		width: 70%;
+		height: 200px;
+	}
+
+	.ding_content {
+		/* background: url("/static/img/ding.png"); */
+		/* background-size: 100% 100%; */
+		width: 100%;
+		margin: 0 auto;
+		padding: 10px 0px;
+		box-sizing: border-box;
+		text-align: left;
+		background: #fff;
+	}
+
+	.ding_help {
+		font-size: 20px;
+		font-weight: 600;
+		color: #ffffff;
+	}
+
+	.ding_px {
+		margin-bottom: 2rem;
+		background: #ffffff;
+		color: rgba(255, 119, 72, 1);
+		border-radius: 10px;
+		width: 3rem;
+		text-align: center;
+		font-size: 10px;
+	}
+
+	.des {
+		font-size: 10px;
+	}
+
+	.ding-title,
+	.ding_bi {
+		/* color: rgba(255, 107, 0, 1); */
+		text-align: center;
+		margin-top: 8px;
+		font-size: 15px;
+	}
+
+	.ding-title {
+		color: #666666
+	}
+
+	.ding_bi {
+		color: #147AFF
+	}
+
+	.ding-sure {
+		background: #FF8000;
+		/* background-size: 100% 100%; */
+		width: 60%;
+		padding: 8px;
+		box-sizing: border-box;
+		color: #ffffff;
+		text-align: center;
+		font-size: 15px;
+		/* margin-top: 20px; */
+		border-radius: 20px;
+		margin: 10px auto 0 auto
+	}
+
+	.cose {
+		position: absolute;
+		top: -5px;
+		right: 9px;
+		margin: 0.16rem 0.16rem;
+		color: rgba(0, 0, 0, 0.59);
+		cursor: pointer;
+		font-size: 0.666667rem;
+		opacity: 0.3;
+	}
+
+	button.weui-btn,
+	input.weui-btn {
+		border-radius: 20px;
+		width: 50%;
+		margin-bottom: 20px;
+	}
+
+	.ding-tu {
+		position: relative;
+		top: 5px;
+		left: 50%;
+		height: 100px;
+		width: 50%;
+		margin-left: -25%;
+		/* background:#f0f; */
+	}
+
+	.ding-tu img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.success {
+		padding: 10px 0;
+		width: 100%;
+		/*text-align: center;*/
+		color: #AF2B2B;
+		font-size: 14px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.success p {
+		width: 35%;
+		text-align: center;
+		padding: 5px 10px;
+		background: #01B0B7;
+		color: #fff;
+		border-radius: 20px;
+	}
+  .header-search {
+
+    width: 100%;
+    z-index: 2000;
+    height: 45px;
+    color: #fff;
+    font-size: 16px;
+    position: fixed;
+
+  }
+
+  .search-content{
+    line-height: 45px;
+    height: 45px;
+    background: rgba(53, 73, 94, 1);
+    text-align: center;
+
+  }
+
+  .fanhui{
+  	width:30px;
+  	height:45px;
+  	line-height:45px;
+  	float:left;
+  	display: flex;
+  	align-items: center;
+  }
+  .fanhui img{
+  	height:30px;
+  	width:100%;
+  }
+
+  .searchbox{
+  	display: inline-block;
+  	width:225px;
+  	position: relative;
+  	overflow: hidden;
+  	text-overflow:ellipsis;
+  	white-space: nowrap;
+  }
+</style>
